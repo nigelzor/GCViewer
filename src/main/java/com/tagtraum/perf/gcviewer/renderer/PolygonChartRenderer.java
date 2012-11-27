@@ -6,6 +6,8 @@ import com.tagtraum.perf.gcviewer.ModelChartImpl;
 import com.tagtraum.perf.gcviewer.model.AbstractGCEvent.GcPattern;
 import com.tagtraum.perf.gcviewer.model.GCEvent;
 import com.tagtraum.perf.gcviewer.model.GCModel;
+import org.javasimon.SimonManager;
+import org.javasimon.Split;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -84,6 +86,7 @@ public abstract class PolygonChartRenderer extends ChartRenderer {
      * the area inside the <code>clip</code> area.
      */
     private Polygon initClippedPolygon(Polygon polygon, Shape clip) {
+        Split split = SimonManager.getStopwatch(getClass().getName() + ".initClippedPolygon").start();
         int xMin = (int) clip.getBounds2D().getMinX();
         int xMax = (int) Math.ceil(clip.getBounds2D().getMaxX());
         
@@ -121,7 +124,8 @@ public abstract class PolygonChartRenderer extends ChartRenderer {
         }
         
         clippedPolygon.invalidate();
-        
+
+        split.stop();
         return clippedPolygon;
     }
 

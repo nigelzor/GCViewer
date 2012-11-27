@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -72,6 +75,8 @@ import com.tagtraum.perf.gcviewer.renderer.UsedTenuredRenderer;
 import com.tagtraum.perf.gcviewer.renderer.UsedYoungRenderer;
 import com.tagtraum.perf.gcviewer.util.LoggerHelper;
 import com.tagtraum.perf.gcviewer.util.OSXSupport;
+import org.javasimon.SimonManager;
+import org.javasimon.jmx.SimonManagerMXBeanImpl;
 
 /**
  * Main class.
@@ -739,6 +744,16 @@ public class GCViewerGui extends JFrame {
         preferences.store();
     }
 
+    private static void registerJavasimonJmx() {
+        try {
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = new ObjectName("org.javasimon.jmx:type=Simon");
+            server.registerMBean(new SimonManagerMXBeanImpl(SimonManager.manager()), name);
+        } catch (Exception e) {
+            LoggerHelper.logException(LOGGER, Level.WARNING, "could not initialize javasimon jmx control", e);
+        }
+    }
+
     public static void main(final String[] args) {
         if (args.length > 1)
             usage();
@@ -753,6 +768,8 @@ public class GCViewerGui extends JFrame {
 //        	} catch (Exception e) {
 //        	    // If Nimbus is not available, you can set the GUI to another look and feel.
 //        	}
+
+            registerJavasimonJmx();
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {

@@ -1,5 +1,9 @@
 package com.tagtraum.perf.gcviewer;
 
+import org.javasimon.Simon;
+import org.javasimon.SimonManager;
+import org.javasimon.Split;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -44,6 +48,7 @@ public abstract class ChartRenderer extends JComponent {
     }
 
     protected void paintComponent(Graphics g) {
+        Split split = SimonManager.getStopwatch(getClass().getName() + ".paintComponent").start();
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D)g;
         Paint oldPaint = g2d.getPaint();
@@ -53,6 +58,7 @@ public abstract class ChartRenderer extends JComponent {
         paintComponent(g2d);
         g2d.setPaint(oldPaint);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAAHint);
+        split.stop();
     }
 
     public abstract void paintComponent(Graphics2D g2d);

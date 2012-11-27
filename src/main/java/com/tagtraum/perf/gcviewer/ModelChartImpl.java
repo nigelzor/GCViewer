@@ -44,6 +44,9 @@ import com.tagtraum.perf.gcviewer.renderer.UsedHeapRenderer;
 import com.tagtraum.perf.gcviewer.renderer.UsedTenuredRenderer;
 import com.tagtraum.perf.gcviewer.renderer.UsedYoungRenderer;
 import com.tagtraum.perf.gcviewer.util.TimeFormat;
+import org.javasimon.SimonManager;
+import org.javasimon.Split;
+import org.javasimon.Stopwatch;
 
 /**
  * Graphical chart of the gc file. It contains the chart and all rulers surrounding it but not
@@ -441,6 +444,13 @@ public class ModelChartImpl extends JScrollPane implements ModelChart, ChangeLis
             setBackground(Color.white);
             setLayout(new GridBagLayout());
             addComponentListener(this);
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            Split split = SimonManager.getStopwatch(getClass().getName() + ".paint").start();
+            super.paint(g);
+            split.stop();
         }
 
         public Dimension getPreferredSize() {
